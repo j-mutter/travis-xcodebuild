@@ -1,3 +1,5 @@
+# This is Travis-CI's implementation instead of the current activesupport version
+# https://github.com/travis-ci/travis-build/blob/master/lib/core_ext/hash/deep_symbolize_keys.rb
 class Hash
   def deep_symbolize_keys
     inject({}) { |result, (key, value)|
