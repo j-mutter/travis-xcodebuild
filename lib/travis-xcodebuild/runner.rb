@@ -102,35 +102,27 @@ module TravisXcodebuild
       string.gsub(/\e\[(\d+);?(\d*)m/, '')
     end
 
-    def platform_string
-      @platform_string ||= begin
-        if config[:xcode_sdk].start_with?("macosx")
-          platform = 'platform=OS X'
-        else
-          platform = 'platform=iOS Simulator,name=iPad'
-          platform << ",OS=#{os}"
-        end
-        platform
+    def destination_specifier
+      if config[:xcode_sdk].start_with?("macosx")
+        destination_specifier = 'platform=OS X'
+      else
+        name = ENV['IOS_PLATFORM_NAME'] || 'iPad'
+        os = config[:xcode_sdk].scan(/\d+\.\d+/).first || 'latest'
+        destination_specifier = "platform=iOS Simulator,name=#{name},OS=#{os}"
       end
-    end
-
-    def os
-      @os ||= begin
-        config[:xcode_sdk].scan(/\d+\.\d+/).first if config[:xcode_sdk]
-      end
+      destination_specifier
     end
 
     def destination
-      @destination ||= "-destination '#{platform_string}'"
+      "-destination '#{destination_specifier}'"
     end
 
     def target
-      @target ||= begin
-        str = "-workspace #{config[:xcode_workspace]}" if config[:xcode_workspace]
-        str = "-project #{config[:xcode_project]}" if config[:xcode_project]
-        str += " -scheme #{config[:xcode_scheme]}" if config[:xcode_scheme]
-        str
+      target_str = ""
+      %w[project workspace scheme].each do |var|
+        target_str << " -#{var} #{config[:"xcode_#{var}"]}" if config[:"xcode_#{var}"]
       end
+      target_str
     end
 
     def config
