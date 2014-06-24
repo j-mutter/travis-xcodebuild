@@ -40,7 +40,7 @@ module TravisXcodebuild
     private
 
     def run_xcodebuild
-      run_external "xcodebuild #{target} #{destination} clean analyze test | xcpretty -c; exit ${PIPESTATUS[0]}"
+      run_external "xcodebuild #{target} #{destination} clean analyze test | tee output.txt |  xcpretty -c; exit ${PIPESTATUS[0]}"
     end
 
     def finish_build
