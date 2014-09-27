@@ -40,7 +40,11 @@ module TravisXcodebuild
     private
 
     def run_xcodebuild
-      run_external "xcodebuild #{target} #{destination} clean analyze test | tee output.txt |  xcpretty -c; exit ${PIPESTATUS[0]}"
+      run_external "xcodebuild #{target} #{destination} #{build_actions} | tee output.txt |  xcpretty -c; exit ${PIPESTATUS[0]}"
+    end
+
+    def build_actions
+      (@options[:build_actions] || TravisXcodebuild::DEFAULT_BUILD_ACTIONS).join(' ')
     end
 
     def finish_build
@@ -122,7 +126,7 @@ module TravisXcodebuild
       %w[project workspace scheme].each do |var|
         target_str << " -#{var} #{config[:"xcode_#{var}"]}" if config[:"xcode_#{var}"]
       end
-      target_str
+      target_str.strip
     end
 
     def config

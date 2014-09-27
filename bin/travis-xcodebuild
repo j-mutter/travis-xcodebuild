@@ -6,5 +6,12 @@ end
 
 require 'travis-xcodebuild'
 
-runner = TravisXcodebuild::Runner.new
+actions = ARGV.any? ? [] : nil
+
+ARGV.each do |arg|
+  abort %Q|Provided build action not a valid xcodebuild buildaction.\nPossible actions are:\n - #{TravisXcodebuild::BUILD_ACTIONS.join("\n - ")}| unless TravisXcodebuild::BUILD_ACTIONS.include?(arg)
+  actions << arg
+end
+
+runner = TravisXcodebuild::Runner.new(build_actions: actions)
 runner.run

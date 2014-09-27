@@ -5,6 +5,17 @@ require 'core_ext/deep_symbolize_keys'
 
 module TravisXcodebuild
 
+  BUILD_ACTIONS = [
+    "build",
+    "analyze",
+    "archive",
+    "test",
+    "installsrc",
+    "install",
+    "clean"
+  ]
+  DEFAULT_BUILD_ACTIONS = ["clean", "analyze", "test"]
+
   class << self
     def config
       @config ||= begin
