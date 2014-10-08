@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "travis-xcodebuild"
-  spec.version       = "0.0.3"
+  spec.version       = "0.0.4"
   spec.authors       = ["Justin Mutter"]
   spec.email         = ["justin@shopify.com"]
   spec.required_ruby_version = '>= 1.8.7'
@@ -13,6 +13,6 @@ Gem::Specification.new do |spec|
   spec.executables   << 'travis-xcodebuild'
 
   spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_runtime_dependency "xcpretty"
+  spec.add_runtime_dependency "xcpretty", "~> 0.1.7"
   spec.add_runtime_dependency "colorize"
 end
