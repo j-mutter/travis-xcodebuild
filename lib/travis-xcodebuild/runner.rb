@@ -53,22 +53,46 @@ module TravisXcodebuild
     end
 
     def verify_xcodebuild
-      status = PTY.check(@pid)
+      tries = 0
+      status = nil
+      while status.nil? && tries < 3
+        sleep 1
+        status = PTY.check(@pid)
+      end
+
       if status.nil?
-        log_warning "Unable to get xcodebuild exit status, checking log for test results..."
-        if @output.last =~ NO_FAILURES_REGEX
-          log_success "Looks like all the tests passed :)"
-        else
-          if @output.last =~ TEST_FAILED_REGEX
-           log_failure "TEST FAILED detected, exiting with non-zero status code"
+        log_warning "Unable to get xcodebuild exit status"
+        if build_actions.include?('test')
+          if @output.last =~ NO_FAILURES_REGEX
+            log_success "Looks like all the tests passed :)"
           else
-            log_warning "Unable to determine test status from build log, did something terrible happen?"
+            if @output.last =~ TEST_FAILED_REGEX
+              log_failure "TEST FAILED detected, exiting with non-zero status code"
+              exit 1
+            end
+
+            if output_has_xcode6_failures?
+              log_failure "Looks like there were some failing tests"
+            else
+              log_warning "Unable to determine test status from build log, did something terrible happen?"
+            end
+            exit 1
           end
-          exit 1
+        else
+          log_warning "No tests were run"
         end
       elsif status.exitstatus > 0
         exit status.exitstatus
       end
+    end
+
+    def output_has_xcode6_failures?
+      output_eof = []
+      index = 1
+      begin
+        output_eof << @output[-index]
+      end while output_eof.last =~ /Test Suite/
+      output_eof.include?("Failing tests:")
     end
 
     def verify_analyzer
