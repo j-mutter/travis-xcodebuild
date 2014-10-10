@@ -48,8 +48,8 @@ module TravisXcodebuild
     end
 
     def finish_build
-      verify_xcodebuild
       verify_analyzer
+      verify_xcodebuild
     end
 
     def verify_xcodebuild
@@ -58,6 +58,7 @@ module TravisXcodebuild
       while status.nil? && tries < 3
         sleep 1
         status = PTY.check(@pid)
+        tries += 1
       end
 
       if status.nil?
@@ -65,6 +66,7 @@ module TravisXcodebuild
         if build_actions.include?('test')
           if @output.last =~ NO_FAILURES_REGEX
             log_success "Looks like all the tests passed :)"
+            exit 0
           else
             if @output.last =~ TEST_FAILED_REGEX
               log_failure "TEST FAILED detected, exiting with non-zero status code"
@@ -80,6 +82,7 @@ module TravisXcodebuild
           end
         else
           log_warning "No tests were run"
+          exit 0
         end
       elsif status.exitstatus > 0
         exit status.exitstatus
