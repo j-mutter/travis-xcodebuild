@@ -81,12 +81,26 @@ module TravisXcodebuild
             exit 1
           end
         else
-          log_warning "No tests were run"
-          exit 0
+          if output_has_xcode6_compile_errors?
+            log_failure "Looks like the build failed to compile"
+            exit 1
+          else
+            log_warning "No tests were run"
+            exit 0
+          end
         end
       elsif status.exitstatus > 0
         exit status.exitstatus
       end
+    end
+
+    def output_has_xcode6_compile_errors?
+      output_eof = []
+      index = 1
+      begin
+        output_eof << @output[-index]
+      end while output_eof.last =~ /\*\* BUILD FAILED \*\*/
+      output_eof.last.include?("failure")
     end
 
     def output_has_xcode6_failures?
@@ -95,7 +109,7 @@ module TravisXcodebuild
       begin
         output_eof << @output[-index]
       end while output_eof.last =~ /Test Suite/
-      output_eof.include?("Failing tests:")
+      output_eof.last.include?("Failing tests:")
     end
 
     def verify_analyzer
