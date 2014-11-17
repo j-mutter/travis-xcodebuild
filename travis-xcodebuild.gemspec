@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "travis-xcodebuild"
-  spec.version       = "0.0.7"
+  spec.version       = "0.0.8"
   spec.authors       = ["Justin Mutter"]
   spec.email         = ["justin@shopify.com"]
   spec.required_ruby_version = '>= 1.8.7'
