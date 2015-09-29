@@ -4,7 +4,12 @@ travis-xcodebuild
 Drop-in replacement for running builds on Travis-CI with `xcodebuild` instead of `xctool`
 
 # Installation
-Either add `travis-xcodebuild` to your Gemfile and install with bundler, or add `gem install travis-xcodebuild` to your `install` steps in `.travis.yml`
+Either add `travis-xcodebuild` to your Gemfile and install with bundler, or add `gem install travis-xcodebuild` to your `install` steps in `.travis.yml` as:
+
+```yaml
+install:
+  - gem install travis-xcodebuild
+```
 
 # Usage
 Simply set the `script` step of `.travis.yml` to either:
